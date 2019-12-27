@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Piyush Garg</title>
-    <link>http://example.org/</link>
-    <description>Recent content on Piyush Garg</description>
+    <title>Posts on Piyush Garg</title>
+    <link>https://piyush-garg.github.io/posts/</link>
+    <description>Recent content in Posts on Piyush Garg</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 27 Dec 2019 14:42:42 +0530</lastBuildDate>
     
-	<atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://piyush-garg.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Debugging Tekton Pipelines</title>
-      <link>http://example.org/posts/debug/</link>
+      <link>https://piyush-garg.github.io/posts/debug/</link>
       <pubDate>Fri, 27 Dec 2019 14:42:42 +0530</pubDate>
       
-      <guid>http://example.org/posts/debug/</guid>
+      <guid>https://piyush-garg.github.io/posts/debug/</guid>
       <description>Tekton Pipeline About Tekton Pipelines is a cloud-native CI/CD solutions. It provides Kubernetes style resources to define CI/CD pipelines and is designed to meet the CI/CD needs of both microservices and monolithic applications. If you want to know more about Tekton Pipelines, you can go through this blog
 In this blog, we will cover some basic Tekton Pipelines concepts and how to debug a pipeline in case of failure.
 Pipeline Concepts Tekton Pipelines leverages Custom Resource Definition (CRD) feature provided by Kubernetes to add CI/CD functionality.</description>
