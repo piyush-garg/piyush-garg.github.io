@@ -2,6 +2,7 @@
 title: "Debugging Tekton Pipelines"
 date: 2019-12-27T14:42:42+05:30
 featured_image: '/images/debug.jpeg'
+draft: false
 ---
 ## Tekton Pipeline
 

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Piyush Garg  | Debugging Tekton Pipelines</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="generator" content="Hugo 0.62.0" />
+    
+    
+      <META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+    
+
+    
+    
+      <link href="/dist/css/app.d98f2eb6bcd1eaedb7edf166bd16af26.css" rel="stylesheet">
+    
+
+    
+
+    
+      
+    
+
+    
+    
+    <meta property="og:title" content="Debugging Tekton Pipelines" />
+<meta property="og:description" content="Tekton Pipeline About Tekton Pipelines is a cloud-native CI/CD solutions. It provides Kubernetes style resources to define CI/CD pipelines and is designed to meet the CI/CD needs of both microservices and monolithic applications. If you want to know more about Tekton Pipelines, you can go through this blog
+In this blog, we will cover some basic Tekton Pipelines concepts and how to debug a pipeline in case of failure.
+Pipeline Concepts Tekton Pipelines leverages Custom Resource Definition (CRD) feature provided by Kubernetes to add CI/CD functionality." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/debug/" />
+<meta property="article:published_time" content="2019-12-27T14:42:42+05:30" />
+<meta property="article:modified_time" content="2019-12-27T14:42:42+05:30" />
+<meta itemprop="name" content="Debugging Tekton Pipelines">
+<meta itemprop="description" content="Tekton Pipeline About Tekton Pipelines is a cloud-native CI/CD solutions. It provides Kubernetes style resources to define CI/CD pipelines and is designed to meet the CI/CD needs of both microservices and monolithic applications. If you want to know more about Tekton Pipelines, you can go through this blog
+In this blog, we will cover some basic Tekton Pipelines concepts and how to debug a pipeline in case of failure.
+Pipeline Concepts Tekton Pipelines leverages Custom Resource Definition (CRD) feature provided by Kubernetes to add CI/CD functionality.">
+<meta itemprop="datePublished" content="2019-12-27T14:42:42&#43;05:30" />
+<meta itemprop="dateModified" content="2019-12-27T14:42:42&#43;05:30" />
+<meta itemprop="wordCount" content="910">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Debugging Tekton Pipelines"/>
+<meta name="twitter:description" content="Tekton Pipeline About Tekton Pipelines is a cloud-native CI/CD solutions. It provides Kubernetes style resources to define CI/CD pipelines and is designed to meet the CI/CD needs of both microservices and monolithic applications. If you want to know more about Tekton Pipelines, you can go through this blog
+In this blog, we will cover some basic Tekton Pipelines concepts and how to debug a pipeline in case of failure.
+Pipeline Concepts Tekton Pipelines leverages Custom Resource Definition (CRD) feature provided by Kubernetes to add CI/CD functionality."/>
+
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  
+  
+  <header class="cover bg-top" style="background-image: url('http://example.org/images/debug.jpeg');">
+    <div class="pb3-m pb6-l bg-black-60">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="http://example.org/" class="f3 fw2 hover-white no-underline white-90 dib">
+      Piyush Garg
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/about/" title="About page">
+              About
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white no-underline white-90" href="/posts/" title="Posts page">
+              Posts
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+
+
+
+<a href="https://twitter.com/pgarg_" target="_blank" class="link-transition twitter link dib z-999 pt3 pt0-l mr1" title="Twitter link" rel="noopener" aria-label="follow on Twitter——Opens in a new window">
+  <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+<a href="https://github.com/piyush-garg" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+
+    </div>
+  </div>
+</nav>
+
+      <div class="tc-l pv6 ph3 ph4-ns">
+        
+          <h1 class="f2 f1-l fw2 white-90 mb0 lh-title">Debugging Tekton Pipelines</h1>
+          
+        
+      </div>
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+
+    <header class="mt4 w-100">
+      <p class="f6 b helvetica tracked">
+          
+        POSTS
+      </p>
+      <h1 class="f1 athelas mb1">Debugging Tekton Pipelines</h1>
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2019-12-27T14:42:42&#43;05:30">December 27, 2019</time>
+      
+      
+    </header>
+
+    <section class="nested-copy-line-height lh-copy serif f4 nested-links nested-img mid-gray pr4-l w-two-thirds-l"><h2 id="tekton-pipeline">Tekton Pipeline</h2>
+<h3 id="about">About</h3>
+<p><strong>Tekton Pipelines</strong> is a cloud-native CI/CD solutions. It provides Kubernetes style resources to define CI/CD pipelines and is designed to meet the CI/CD needs of both microservices and monolithic applications. If you want to know more about Tekton Pipelines, you can go through this <a href="https://medium.com/@nikhilthomas1/cloud-native-cicd-on-openshift-with-openshift-pipelines-tektoncd-pipelines-e944cd10341a7">blog</a></p>
+<p>In this blog, we will cover some basic Tekton Pipelines concepts and how to debug a pipeline in case of failure.</p>
+<h3 id="pipeline-concepts">Pipeline Concepts</h3>
+<p><strong>Tekton Pipelines</strong> leverages Custom Resource Definition (CRD) feature provided by Kubernetes to add CI/CD functionality. It uses Custom Resources as building blocks to define a CI/CD pipeline. This lets users interact with these custom resources just like any other Kubernetes resource.</p>
+<p>Tekton Pipelines adds with the following custom resources:</p>
+<ul>
+<li><strong>Task</strong>: A task defines the number of steps that run sequentially to perform a specific action/task. They are defined once and can be shared by multiple Pipelines.
+<ul>
+<li>A Step, is a basic unit of a Task. For example, executing a command in a container spun up with a defined configuration for image, volumes, environment variables etc.</li>
+</ul>
+</li>
+<li><strong>Pipeline</strong>: A Pipeline defines a workflow or an order of execution for Tasks along with the inputs and the outputs</li>
+<li><strong>PipelineResource</strong>: These are used to define the Inputs and Outputs to a Pipeline or a Task.<br>
+You can define the following PipelineResources:
+<ul>
+<li>Source-code (pull request or git repository with branch or revision)</li>
+<li>Image</li>
+<li>Storage bucket</li>
+<li>Cluster to use in Pipeline</li>
+<li>Cloud Event</li>
+</ul>
+</li>
+<li><strong>TaskRun</strong>: An invocation or an instantiation of a Task with its Inputs and Outputs.</li>
+<li><strong>PipelineRun</strong>: An invocation of a Pipeline with Inputs and Outputs.</li>
+</ul>
+<p>A visual representation of the Pipeline concepts.</p>
+<figure>
+    <img src="/images/pipeline.jpg"/> 
+</figure>
+
+<p>A Pipeline consists of a set of Tasks that executes in a certain order with optional Inputs and Outputs. A Task further contains one or more steps that gets executed sequentially with the required resources. Tasks and Resources are reusable definitions that can be used by multiple pipelines. Now, in order to execute a Pipeline, you need to create a PipelineRun. A Task can also be executed individually by creating a TaskRun.</p>
+<h3 id="behind-the-scenes">Behind the scenes</h3>
+<p>When you create a PipelineRun to execute a Pipeline, it creates TaskRuns for all the Tasks defined in the Pipeline. To execute the Task which has steps defined as container specification, the TaskRun spins up a pod with one container for each step with the provided configuration and executes the command specified as the entrypoint in that container.</p>
+<h3 id="debugging-tekton-pipeline-failures">Debugging Tekton Pipeline failures</h3>
+<p>To find the status of PipelineRun or a Taskrun, check the logs of the PipelineRun, find the TaskRuns of a PipelineRun, find the respective pods, see the logs, debug in case of failure.</p>
+<ul>
+<li>
+<p>Get the status of Pipeline/Taskrun</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get pipelinerun &lt;pipelinerun-name&gt;
+</code></pre></div><p>or</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get taskrun &lt;taskrun-name&gt;
+</code></pre></div><p>You will find a column <strong>SUCCEEDED</strong> having value true or false</p>
+</li>
+<li>
+<p>Get the logs of PipelineRun/TaskRun</p>
+<ol>
+<li>
+<p>This is where the magic of labels comes in :</p>
+<ul>
+<li>When you create a PipelineRun to execute a given Pipeline
+<ol>
+<li>A <strong>tekton.dev/pipeline=pipelineName</strong> label gets added to the PipelineRun, all TaskRuns and the pods.</li>
+<li>A <strong>tekton.dev/pipelineRun=pipelineRunName</strong> label gets added to all TaskRuns and pods.</li>
+</ol>
+</li>
+<li>Similarly when you create a TaskRun to execute a given Task.
+<ol>
+<li>A <strong>tekton.dev/task=taskName</strong> label gets added to the TaskRun and the pod.</li>
+<li>A <strong>tekton.dev/taskRun=taskRunName</strong> label gets added to the pod.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>Thus, Pods associated with a PipelineRun can be found by:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get pods -l tekton.dev/pipelineRun<span style="color:#f92672">=</span>test-pipelinerun
+</code></pre></div><p>Pods associated with a task using:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get pods -l tekton.dev/task<span style="color:#f92672">=</span>test-task
+</code></pre></div></li>
+<li>
+<p>If you have defined the step with the name <strong>build</strong>, the container name in the pod will be prefixed with the step keyword, in this case, <strong>step-build</strong>. This allows for logs to be fetched using</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl logs &lt;podname&gt; -c &lt;containername&gt;
+</code></pre></div></li>
+</ol>
+</li>
+<li>
+<p>Analyzing a PipelineRun status</p>
+<ol>
+<li>
+<p>PipelineRun status structure overview</p>
+<p>You can fetch the status of a PipelineRun using:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">kubectl get pipelinerun &lt;pipelinerun-name&gt; -o yaml
+</code></pre></div><p>The structure of a PipelineRun status will look something like this:</p>
+<pre><code>Status
+    Conditions
+    -   Message : (Error msg in case of failure)
+        Reason : It is status of pipelinerun (Succeeded or Failed)
+       
+    Taskruns
+    -   Taskrunname (Taskrun created)
+        -   Pipelinetaskname - (name of the task in pipeline)
+            Status:
+                Conditions
+                -   Message : (Error msg in case of failure)
+                    Reason : It is status of taskrun (Succeeded or Failed)
+                Podname (Pod name of the taskrun)
+                Steps
+                -   Container : (container name of the step in pod)
+                    Name: (name of the step in task)
+                    Terminated:
+                    -   exitCode: (exit code of the container)
+                        Reason: (status of container)
+                       
+                (This will be repeated for all the steps in the task)
+    (This will be repeated for all the tasks in the pipeline)
+</code></pre></li>
+</ol>
+</li>
+<li>
+<p>Tekton also helps analyze a failed PipelineRun or TaskRun.</p>
+<ol>
+<li>
+<p>Look at the <strong>status.condtions[0].message</strong></p>
+<p>In case of step failure, its shows <strong>kubectl logs</strong> command to fetch the logs of failed container</p>
+</li>
+<li>
+<p><strong>Status.conditions[0].message</strong> shows verbose error message e.g. validation failure</p>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="is-there-a-simpler-and-a-better-way">Is there a simpler and a better way?</h3>
+<p>The above process to see the logs and fetch the details seems very cumbersome, and slightly irritating too if it needs to be done very often. To simplify the above process, Tekton provides a <a href="https://github.com/tektoncd/cli">CLI</a>.</p>
+<ul>
+<li>
+<p>To get the list of all pipelineRuns, use:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">tkn pipelinerun ls
+</code></pre></div></li>
+<li>
+<p>To see the logs, run:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">tkn pipelinerun logs &lt;pipelinerun-name&gt;
+</code></pre></div></li>
+<li>
+<p>To see the details of the Pipelinerun, such as it’s status, Taskruns etc., run:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">tkn pipelinerun describe &lt;pipelinerun-name&gt;
+</code></pre></div></li>
+</ul>
+<p>You can do the same for TaskRun too.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>I hope you find this post helpful and useful. In my next post, I will prepare an exercise to debug pipeline and demonstrate it. Stay tuned!</p>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6">
+      
+      <div id="commento"></div>
+<script defer src="https://cdn.commento.io/js/commento.js"></script>
+
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://example.org/" >
+    &copy; 2019 Piyush Garg
+  </a>
+    <div>
+
+
+
+<a href="https://twitter.com/pgarg_" target="_blank" class="link-transition twitter link dib z-999 pt3 pt0-l mr1" title="Twitter link" rel="noopener" aria-label="follow on Twitter——Opens in a new window">
+  <svg height="32px"  style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/></svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+<a href="https://github.com/piyush-garg" target="_blank" class="link-transition github link dib z-999 pt3 pt0-l mr1" title="Github link" rel="noopener" aria-label="follow on Github——Opens in a new window">
+  <svg  height="32px"  style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="32px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000" width="8px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;fill:;"/>
+</svg>
+</span></a>
+
+
+
+
+
+</div>
+  </div>
+</footer>
+
+    
+
+  <script src="/dist/js/app.3fc0f988d21662902933.js"></script>
+
+
+  </body>
+</html>
