@@ -17,9 +17,9 @@
       <pubDate>Fri, 27 Dec 2019 14:42:42 +0530</pubDate>
       
       <guid>https://piyush-garg.github.io/posts/debug/</guid>
-      <description>Tekton Pipeline About Tekton Pipelines is a cloud-native CI/CD solutions. It provides Kubernetes style resources to define CI/CD pipelines and is designed to meet the CI/CD needs of both microservices and monolithic applications. If you want to know more about Tekton Pipelines, you can go through this blog
+      <description>Tekton Pipeline Tekton Pipelines is a cloud-native CI/CD solutions. It provides Kubernetes style resources to define CI/CD pipelines and is designed to meet the CI/CD needs of both microservices and monolithic applications. If you want to know more about Tekton Pipelines, you can go through this blog
 In this blog, we will cover some basic Tekton Pipelines concepts and how to debug a pipeline in case of failure.
-Pipeline Concepts Tekton Pipelines leverages Custom Resource Definition (CRD) feature provided by Kubernetes to add CI/CD functionality.</description>
+Tekton Concepts Tekton Pipelines leverages Custom Resource Definition (CRD) feature provided by Kubernetes to add CI/CD functionality.</description>
     </item>
     
   </channel>
